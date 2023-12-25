@@ -13,8 +13,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
       initialRoute: "/",
-      home: const Home(),
+      home: Home(),
       // routes: {
       //   "history": (context) => const History(),
       // },
@@ -48,7 +51,7 @@ PageRouteBuilder _generateRoute(RouteSettings settings) {
   // Your dynamic routing logic based on settings
   switch (settings.name) {
     case '/':
-      page = const Home();
+      page = Home();
       break;
     case 'history':
       page = const History();
