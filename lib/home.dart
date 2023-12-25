@@ -52,7 +52,7 @@ class _HomeState extends State<Home> {
   }
 
   void _handleSendMessage(String text, bool isSender) {
-    if (text.isEmpty) {
+    if (text.isEmpty || (loading && isSender)) {
       return;
     }
 
@@ -61,7 +61,10 @@ class _HomeState extends State<Home> {
       loading = true;
       _textController.clear();
       FocusScope.of(context).unfocus();
-      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+
+      Future.delayed(const Duration(seconds: 1), () {
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      });
     });
 
     if (isSender) {
@@ -69,11 +72,6 @@ class _HomeState extends State<Home> {
         setState(() {
           _handleSendMessage("Hi, I'm ChatGPT ${DateTime.now()}", false);
           loading = false;
-          _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOut,
-          );
         });
       });
     }
@@ -94,19 +92,21 @@ class _HomeState extends State<Home> {
             ),
           ),
           const SizedBox(width: 8.0),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.all(12.0),
-              decoration: BoxDecoration(
-                color: message.isSender ? Colors.blue : Colors.green,
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              child: Text(
-                message.text,
-                style: const TextStyle(color: Colors.white),
-                softWrap: true,
-                overflow: TextOverflow.visible,
-              ),
+          Container(
+            padding: const EdgeInsets.all(12.0),
+            constraints: const BoxConstraints(
+              maxWidth: 320, // 你可以根据需要设置最大宽度
+              minWidth: 0,
+            ),
+            decoration: BoxDecoration(
+              color: message.isSender ? Colors.blue : Colors.green,
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Text(
+              message.text,
+              style: const TextStyle(color: Colors.white),
+              softWrap: true,
+              overflow: TextOverflow.visible,
             ),
           ),
         ],
@@ -121,13 +121,13 @@ class _HomeState extends State<Home> {
         children: [
           Expanded(
             child: TextField(
+              onSubmitted: (_) {
+                _handleSendMessage(_textController.text, true);
+              },
               controller: _textController,
               decoration: const InputDecoration(
                 hintText: 'Type a message...',
               ),
-              onSubmitted: (_) {
-                _handleSendMessage(_textController.text, true);
-              },
               textInputAction: TextInputAction.send,
               inputFormatters: [
                 LengthLimitingTextInputFormatter(40),
