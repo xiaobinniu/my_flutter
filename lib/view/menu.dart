@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../component/menu.setup.dart';
-
 class ChatItem {
   final String text;
   final String createTime;
@@ -19,6 +17,8 @@ class Menu extends StatefulWidget {
 class _MenuState extends State<Menu> {
   final List<ChatItem> _chatItems = [];
 
+  bool isSetupVisible = false;
+
   @override
   void initState() {
     super.initState();
@@ -32,6 +32,12 @@ class _MenuState extends State<Menu> {
     }
     setState(() {
       _chatItems.add(ChatItem("Hello End", DateTime.now().toString()));
+    });
+  }
+
+  void toggleSetupVisibility() {
+    setState(() {
+      isSetupVisible = !isSetupVisible;
     });
   }
 
@@ -51,29 +57,37 @@ class _MenuState extends State<Menu> {
         child: Stack(
           children: [
             Container(
-              width: 300,
-              padding: const EdgeInsets.fromLTRB(5, 20, 0, 20),
-              decoration: const BoxDecoration(
-                color: Colors.black,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _builtNewChat(),
-                  Expanded(
-                    child: Scrollbar(
-                      child: ListView.builder(
-                        itemCount: _chatItems.length,
-                        itemBuilder: (context, index) {
-                          return _buildChatItem(_chatItems[index]);
-                        },
-                      ),
+                width: 300,
+                padding: const EdgeInsets.fromLTRB(5, 10, 0, 10),
+                decoration: const BoxDecoration(
+                  color: Colors.black,
+                ),
+                child: Stack(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _builtNewChat(),
+                        Expanded(
+                          child: Scrollbar(
+                            child: ListView.builder(
+                              itemCount: _chatItems.length,
+                              itemBuilder: (context, index) {
+                                return _buildChatItem(_chatItems[index]);
+                              },
+                            ),
+                          ),
+                        ),
+                        _buildUserItem(),
+                      ],
                     ),
-                  ),
-                  const MenuSetup(),
-                ],
-              ),
-            ),
+                    isSetupVisible
+                        ? _buildSetup()
+                        : Container(
+                            key: UniqueKey(),
+                          ),
+                  ],
+                )),
             Positioned(
               top: 20,
               right: 0,
@@ -165,6 +179,83 @@ class _MenuState extends State<Menu> {
             fontSize: 16,
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildUserItem() {
+    return GestureDetector(
+      onTap: () {
+        toggleSetupVisibility();
+      },
+      child: Container(
+        width: 280,
+        height: 40,
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        decoration: const BoxDecoration(
+          color: Color.fromARGB(255, 100, 100, 100),
+          borderRadius: BorderRadius.all(Radius.circular(8)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            SvgPicture.asset("assets/images/chatgpt.svg",
+                width: 20,
+                theme: const SvgTheme(
+                  currentColor: Colors.white,
+                )),
+            const SizedBox(width: 8),
+            const Text(
+              "user",
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSetup() {
+    return Positioned(
+      key: UniqueKey(),
+      bottom: 50,
+      child: Container(
+        width: 280,
+        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+        decoration: const BoxDecoration(
+          color: Color.fromARGB(255, 100, 100, 100),
+          borderRadius: BorderRadius.all(Radius.circular(8)),
+        ),
+        child: Column(
+          children: [
+            _buildSetupItem(Icons.settings_outlined, "Setting"),
+            _buildSetupItem(Icons.settings_outlined, "Setting"),
+            _buildSetupItem(Icons.settings_outlined, "Setting"),
+            _buildSetupItem(Icons.settings_outlined, "Setting"),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSetupItem(IconData icon, String text) {
+    return Container(
+      height: 30,
+      margin: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.white),
+          const SizedBox(
+            width: 8,
+          ),
+          Text(
+            text,
+            style: const TextStyle(color: Colors.white, fontSize: 16),
+          )
+        ],
       ),
     );
   }
