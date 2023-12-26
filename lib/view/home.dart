@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:my_flutter/view/menu.dart';
 
 class Message {
   final String text;
@@ -18,6 +19,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final TextEditingController _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final List<Message> _messages = [];
   bool loading = false;
 
@@ -29,24 +31,54 @@ class _HomeState extends State<Home> {
       },
       child: Scaffold(
         appBar: AppBar(
+          key: _scaffoldKey,
           title: const Text("ChatGPT"),
           centerTitle: true,
+          leading: Builder(
+            builder: (context) => IconButton(
+              icon: const Icon(Icons.sort_outlined), // Your custom icon here
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            ),
+          ),
         ),
         body: Column(
           children: [
             Expanded(
-              child: ListView.builder(
-                controller: _scrollController,
-                padding: const EdgeInsets.all(8.0),
-                itemCount: _messages.length,
-                itemBuilder: (context, index) {
-                  return _buildMessageItem(_messages[index]);
-                },
-              ),
+              child: _messages.isNotEmpty
+                  ? ListView.builder(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.all(8.0),
+                      itemCount: _messages.length,
+                      itemBuilder: (context, index) {
+                        return _buildMessageItem(_messages[index]);
+                      },
+                    )
+                  : Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset(
+                          "assets/images/chatgpt.svg",
+                          fit: BoxFit.contain,
+                        ),
+                        const Text(
+                          "How can I help you today?",
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
             ),
             _buildInputField(),
           ],
         ),
+        drawer: const SafeArea(
+          child: Menu(),
+        ),
+        onDrawerChanged: (isOpened) => {print("onDrawerChanged $isOpened")},
       ),
     );
   }

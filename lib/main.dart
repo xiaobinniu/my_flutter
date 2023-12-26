@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:my_flutter/history.dart';
-import 'package:my_flutter/home.dart';
-import './error.dart';
+import 'package:my_flutter/view/history.dart';
+import 'package:my_flutter/view/home.dart';
+import 'package:my_flutter/view/error.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       initialRoute: "/",
-      home: Home(),
+      home: const Home(),
       // routes: {
       //   "history": (context) => const History(),
       // },
@@ -51,7 +51,7 @@ PageRouteBuilder _generateRoute(RouteSettings settings) {
   // Your dynamic routing logic based on settings
   switch (settings.name) {
     case '/':
-      page = Home();
+      page = const Home();
       break;
     case 'history':
       page = const History();
