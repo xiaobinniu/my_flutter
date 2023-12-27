@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:my_flutter/view/history.dart';
 import 'package:my_flutter/view/home.dart';
 import 'package:my_flutter/view/error.dart';
 
@@ -63,9 +62,6 @@ PageRouteBuilder _generateRoute(RouteSettings settings) {
   switch (settings.name) {
     case 'home':
       page = const Home();
-      break;
-    case 'history':
-      page = const History();
       break;
     // Add more cases as needed
     default:
