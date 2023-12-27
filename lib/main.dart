@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      initialRoute: "/",
+      initialRoute: "home",
       home: const Home(),
       // routes: {
       //   "history": (context) => const History(),
@@ -61,7 +61,7 @@ PageRouteBuilder _generateRoute(RouteSettings settings) {
 
   // Your dynamic routing logic based on settings
   switch (settings.name) {
-    case '/':
+    case 'home':
       page = const Home();
       break;
     case 'history':

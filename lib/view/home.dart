@@ -31,7 +31,15 @@ class _HomeState extends State<Home> {
 
   final List<Message> _messages = [];
   bool loading = false;
-  DialogueClass dialogue = DialogueClass();
+  late final DialogueClass dialogue;
+  late final int id;
+
+  @override
+  void initState() {
+    super.initState();
+    dialogue = DialogueClass();
+    id = dialogue.id;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,10 +99,10 @@ class _HomeState extends State<Home> {
             )
           ],
         ),
-        drawer: const SafeArea(
-          child: Menu(),
+        drawer: SafeArea(
+          child: Menu(id: id),
         ),
-        onDrawerChanged: (isOpened) => {print("onDrawerChanged $isOpened")},
+        onDrawerChanged: (isOpened) => {},
       ),
     );
   }

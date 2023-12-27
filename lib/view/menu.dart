@@ -3,14 +3,16 @@ import 'package:flutter_svg/flutter_svg.dart';
 import "../storage/history_data.dart";
 
 class Menu extends StatefulWidget {
-  const Menu({super.key});
+  final int? id;
+  const Menu({super.key, this.id});
 
   @override
   State<Menu> createState() => _MenuState();
 }
 
 class _MenuState extends State<Menu> {
-  final List<List<Dialogue>> _chatItems = [];
+  List<List<Dialogue>> _chatItems = [];
+  final List<int> _indexs = [];
 
   bool isSetupVisible = false;
 
@@ -19,18 +21,15 @@ class _MenuState extends State<Menu> {
     super.initState();
 
     var map = DialogueClass.getAll();
-    print(map);
     var keys = map.keys.toList()..sort();
-    print(keys);
-    var values = [];
+    List<List<Dialogue>> values = [];
     for (var key in keys) {
-      values.add(map[key]);
+      values.add(map[key]!);
+      _indexs.add(key);
     }
     setState(() {
-      // _chatItems.addAll(values as Iterable<List<Dialogue>>);
+      _chatItems = values;
     });
-
-    print(values);
   }
 
   void toggleSetupVisibility() {
@@ -69,9 +68,26 @@ class _MenuState extends State<Menu> {
                         Expanded(
                           child: Scrollbar(
                             child: ListView.builder(
+                              cacheExtent: 30,
                               itemCount: _chatItems.length,
                               itemBuilder: (context, index) {
-                                return _buildChatItem(_chatItems[index][0]);
+                                return GestureDetector(
+                                  onTap: () {
+                                    if (widget.id == _indexs[index]) {
+                                      Navigator.pop(context);
+                                      return;
+                                    }
+
+                                    Navigator.pushNamed(
+                                      context,
+                                      "home",
+                                      arguments: <String, int>{
+                                        'index': _indexs[index],
+                                      },
+                                    );
+                                  },
+                                  child: _buildChatItem(_chatItems[index][0]),
+                                );
                               },
                             ),
                           ),
@@ -155,27 +171,24 @@ class _MenuState extends State<Menu> {
     );
   }
 
-  Widget _buildChatItem(Dialogue item) {
-    return GestureDetector(
-      onTap: () {},
-      child: Container(
-        decoration: const BoxDecoration(
-          border: Border(
-            bottom: BorderSide(
-              color: Color.fromRGBO(20, 20, 20, 1),
-              width: 1,
-            ),
+  Widget _buildChatItem(Dialogue dialogue) {
+    return Container(
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: Color.fromRGBO(20, 20, 20, 1),
+            width: 1,
           ),
         ),
-        padding: const EdgeInsets.all(8),
-        height: 36,
-        child: Text(
-          item.text,
-          style: const TextStyle(
-            color: Colors.white,
-            overflow: TextOverflow.ellipsis,
-            fontSize: 16,
-          ),
+      ),
+      padding: const EdgeInsets.all(8),
+      // height: 36,
+      child: Text(
+        dialogue.text,
+        style: const TextStyle(
+          color: Colors.white,
+          overflow: TextOverflow.ellipsis,
+          fontSize: 16,
         ),
       ),
     );
