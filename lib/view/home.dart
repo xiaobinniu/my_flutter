@@ -1,7 +1,15 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:my_flutter/view/menu.dart';
+import '../net/fake_data.dart';
+import '../view/menu.dart';
+import '../storage/history_data.dart';
+
+// import '../net/openai.dart';
+// import '../net/http_client.dart';
+// import '../net/api.dart' as config;
 
 class Message {
   final String text;
@@ -20,8 +28,10 @@ class _HomeState extends State<Home> {
   final TextEditingController _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   final List<Message> _messages = [];
   bool loading = false;
+  DialogueClass dialogue = DialogueClass();
 
   @override
   Widget build(BuildContext context) {
@@ -62,17 +72,23 @@ class _HomeState extends State<Home> {
                           "assets/images/chatgpt.svg",
                           fit: BoxFit.contain,
                         ),
+                        const SizedBox(height: 16.0),
                         const Text(
                           "How can I help you today?",
                           style: TextStyle(
-                            fontSize: 24,
+                            fontSize: 20,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],
                     ),
             ),
-            _buildInputField(),
+            Center(
+              child: _buildInputField(),
+            ),
+            const SizedBox(
+              height: 5,
+            )
           ],
         ),
         drawer: const SafeArea(
@@ -91,20 +107,26 @@ class _HomeState extends State<Home> {
     setState(() {
       _messages.add(Message(text, isSender));
       loading = true;
-      _textController.clear();
-      FocusScope.of(context).unfocus();
-
-      Future.delayed(const Duration(seconds: 1), () {
-        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-      });
     });
+    _textController.clear();
+    FocusScope.of(context).unfocus();
+
+    dialogue.add(Dialogue(isSender ? UserType.system : UserType.user, text));
 
     if (isSender) {
-      Future.delayed(const Duration(seconds: 2), () {
+      Future.delayed(const Duration(seconds: 1), () {
+        int index = Random().nextInt(fakeData.length - 1) + 1;
         setState(() {
-          _handleSendMessage("Hi, I'm ChatGPT ${DateTime.now()}", false);
+          _handleSendMessage(fakeData[index], false);
           loading = false;
         });
+      });
+      Future.delayed(const Duration(milliseconds: 1200), () {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
+        );
       });
     }
   }
@@ -148,7 +170,12 @@ class _HomeState extends State<Home> {
 
   Widget _buildInputField() {
     return Container(
-      padding: const EdgeInsets.all(8.0),
+      width: 390,
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey),
+        borderRadius: BorderRadius.circular(8),
+      ),
       child: Row(
         children: [
           Expanded(
@@ -159,6 +186,8 @@ class _HomeState extends State<Home> {
               controller: _textController,
               decoration: const InputDecoration(
                 hintText: 'Type a message...',
+                hintStyle: TextStyle(color: Colors.grey),
+                border: InputBorder.none,
               ),
               textInputAction: TextInputAction.send,
               inputFormatters: [
@@ -177,4 +206,22 @@ class _HomeState extends State<Home> {
       ),
     );
   }
+
+  // _sendHttp() {
+  //   // 发送请求
+  //   RequestOpenaiData requestDataBuilder = RequestOpenaiData(text);
+  //   Map<String, dynamic> requestData = requestDataBuilder.buildRequestData();
+  //   HttpClient httpClient = HttpClient(config.endpoint);
+  //   httpClient.postRequest(requestData).then((response) {
+  //     if (response["statusCode"] == 200) {
+  //       _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+  //     } else {
+  //       print("${response['error']?['message']}");
+  //     }
+  //   }).whenComplete(() {
+  //     setState(() {
+  //       loading = false;
+  //     });
+  //   });
+  // }
 }

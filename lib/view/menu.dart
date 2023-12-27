@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-class ChatItem {
-  final String text;
-  final String createTime;
-  ChatItem(this.text, this.createTime);
-}
+import "../storage/history_data.dart";
 
 class Menu extends StatefulWidget {
   const Menu({super.key});
@@ -15,24 +10,27 @@ class Menu extends StatefulWidget {
 }
 
 class _MenuState extends State<Menu> {
-  final List<ChatItem> _chatItems = [];
+  final List<List<Dialogue>> _chatItems = [];
 
   bool isSetupVisible = false;
 
   @override
   void initState() {
     super.initState();
-    setState(() {
-      _chatItems.add(ChatItem("Hello Start", DateTime.now().toString()));
-    });
-    for (int i = 0; i < 100; i++) {
-      setState(() {
-        _chatItems.add(ChatItem("Hello", DateTime.now().toString()));
-      });
+
+    var map = DialogueClass.getAll();
+    print(map);
+    var keys = map.keys.toList()..sort();
+    print(keys);
+    var values = [];
+    for (var key in keys) {
+      values.add(map[key]);
     }
     setState(() {
-      _chatItems.add(ChatItem("Hello End", DateTime.now().toString()));
+      // _chatItems.addAll(values as Iterable<List<Dialogue>>);
     });
+
+    print(values);
   }
 
   void toggleSetupVisibility() {
@@ -73,7 +71,7 @@ class _MenuState extends State<Menu> {
                             child: ListView.builder(
                               itemCount: _chatItems.length,
                               itemBuilder: (context, index) {
-                                return _buildChatItem(_chatItems[index]);
+                                return _buildChatItem(_chatItems[index][0]);
                               },
                             ),
                           ),
@@ -157,7 +155,7 @@ class _MenuState extends State<Menu> {
     );
   }
 
-  Widget _buildChatItem(ChatItem item) {
+  Widget _buildChatItem(Dialogue item) {
     return GestureDetector(
       onTap: () {},
       child: Container(
