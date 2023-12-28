@@ -64,7 +64,12 @@ class _MenuState extends State<Menu> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _builtNewChat(),
+                        GestureDetector(
+                          child: _builtNewChat(),
+                          onTap: () {
+                            Navigator.pushNamed(context, "home");
+                          },
+                        ),
                         Expanded(
                           child: Scrollbar(
                             child: ListView.builder(

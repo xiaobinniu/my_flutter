@@ -7,7 +7,7 @@ enum UserType {
 
 class Dialogue {
   final UserType userType;
-  final String text;
+  String text;
 
   Dialogue(this.userType, this.text);
 }
@@ -19,7 +19,7 @@ class DialogueClass {
     if (dialogues[id] == null) {
       dialogues[id] = [];
     }
-    dialogues[id]?.add(message);
+    dialogues[id]!.add(message);
   }
 
   static List<Dialogue>? get(int id) {

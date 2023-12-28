@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
+
 import './api.dart' as config;
 import 'package:http/http.dart' as http;
 import 'dart:convert'; // json解析库
@@ -22,7 +24,7 @@ class HttpClient {
         body: jsonEncode(requestData),
       );
 
-      print(response.body);
+      debugPrint(response.body);
 
       return jsonDecode(response.body);
     } catch (error) {
