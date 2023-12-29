@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:my_flutter/view/home.dart';
 import 'package:my_flutter/view/error.dart';
 
+import 'bilibili/bilibili_home.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -63,9 +65,10 @@ PageRouteBuilder _generateRoute(RouteSettings settings) {
     case 'home':
       page = const Home();
       break;
-    // Add more cases as needed
+    case 'bilibili-home':
+      page = const BilibiliHome();
+      break;
     default:
-      // Handle unknown routes
       return _createRoute(const Error());
   }
 

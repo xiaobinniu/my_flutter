@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 
 // 模拟 ChatGPT 生成的消息
-const messages = ['Hello', 'How are you?', 'Nice to meet you.', "这是一个中文句子的示例。", "这是另一个中文句子的例子。",];
+const messages = ['Hello', 'How are you? ', 'Nice to meet you.\n ', "这是一个中文句子的示例。 ", "这是另一个中文句子的例子。 ",];
 
 // 处理 SSE 连接的路由
 app.post('/stream', (req, res) => {

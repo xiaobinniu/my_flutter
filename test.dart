@@ -1,14 +1,6 @@
 void main() {
-  var obj = {
-    "a": "a",
-  };
-
-  var b = [];
-
-  b.add(obj);
-  print(b);
-
-  obj["a"] = "aa";
-
-  print(b); // 输出 "a a"
+  var str = 'Nice to meet you.\n';
+  print(str.contains('\n'));
+  var newstr = str.replaceAll("\n", "replace");
+  print(newstr);
 }

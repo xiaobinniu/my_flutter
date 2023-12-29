@@ -52,12 +52,25 @@ class _HomeState extends State<Home> {
           centerTitle: true,
           leading: Builder(
             builder: (context) => IconButton(
-              icon: const Icon(Icons.sort_outlined), // Your custom icon here
+              icon: const Icon(Icons.sort_outlined),
               onPressed: () {
                 Scaffold.of(context).openDrawer();
               },
             ),
           ),
+          actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.pushNamed(context, 'bilibili-home');
+              },
+              icon: Image.network(
+                "https://www.bilibili.com/favicon.ico?v=1",
+                width: 20,
+                height: 20,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ],
         ),
         body: Column(
           children: [
@@ -138,7 +151,8 @@ class _HomeState extends State<Home> {
   }
 
   void _onReceiveMessage(String text) {
-    debugPrint('Received message: $text');
+    debugPrint(text);
+
     if (text == "done") {
       setState(() {
         loading = false;
@@ -149,14 +163,13 @@ class _HomeState extends State<Home> {
 
     if (nowReceivemessage == null) {
       nowReceivemessage = Dialogue(UserType.system, text);
-      debugPrint(nowReceivemessage!.text);
       setState(() {
         _messages.add(nowReceivemessage!);
       });
       dialogue.add(nowReceivemessage!);
     } else {
       setState(() {
-        nowReceivemessage!.text += " $text";
+        nowReceivemessage!.text += text;
       });
       _scrollController.animateTo(
         _scrollController.position.maxScrollExtent,
